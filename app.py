@@ -21,7 +21,6 @@ nutrition = st.text_input("Nutrition requirements (e.g., vegetarian, high protei
 goal = st.text_input("Desired goal (e.g., stamina, recovery, tactical improvement)")
 
 if st.button("Generate Plan"):
-    # Build the prompt
     prompt = f"""
     You are CoachBot AI, a virtual sports coach.
     Sport: {sport}
@@ -38,6 +37,14 @@ if st.button("Generate Plan"):
     - Nutrition guidance
     """
 
+    try:
+        response = model.generate_content([prompt])  # wrap in list
+        st.subheader("🏆 Your Personalized Plan")
+        st.write(response.text)
+    except Exception as e:
+        st.error(f"Error generating content: {e}")
+
+  
     response = model.generate_content(prompt)
     st.subheader("🏆 Your Personalized Plan")
     st.write(response.text)
