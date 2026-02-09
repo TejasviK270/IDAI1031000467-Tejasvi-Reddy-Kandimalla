@@ -26,27 +26,23 @@ goal = st.text_input("Desired goal (e.g., stamina, recovery, tactical improvemen
 
 
 if st.button("Generate Plan"):
-    prompts = [
-        f"Generate a full-body workout plan for a {position} in {sport}.",
-        f"Create a safe recovery training schedule for an athlete with {injury}.",
-        f"Provide tactical coaching tips to improve performance in {sport}.",
-        f"Suggest a week-long nutrition guide for a 15-year-old athlete following {nutrition}.",
-        f"Generate a personalized warm-up and cooldown routine for a {position} in {sport}.",
-        f"Design a hydration and electrolyte strategy for a young {sport} athlete.",
-        f"Create mental focus routines for a player preparing for a tournament.",
-        f"Provide mobility workouts for post-injury recovery targeting {injury}.",
-        f"Generate positional decision-making drills for a {position} in {sport}.",
-        f"Suggest pre-match visualization techniques to improve confidence and tactical awareness."
-    ]
+    # Build the prompt
+    prompt = f"""
+    You are CoachBot AI, a virtual sports coach.
+    Sport: {sport}
+    Position: {position}
+    Injury history: {injury}
+    Training preference: {training_pref}
+    Nutrition: {nutrition}
+    Goal: {goal}
 
-    for p in prompts:
-        try:
-            response = model.generate_content([p])
-            st.write(f"**Prompt:** {p}")
-            st.write(f"**Output:** {response.text}")
-            st.write("---")
-        except Exception as e:
-            st.error(f"Gemini API error: {e}")
+    Generate a personalized fitness plan including:
+    - Workout routine
+    - Recovery tips
+    - Tactical advice
+    - Nutrition guidance
+    """
+
 
     try:
         response = model.generate_content([prompt])  # wrap prompt in list
