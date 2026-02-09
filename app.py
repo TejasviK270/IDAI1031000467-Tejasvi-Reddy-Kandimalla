@@ -7,7 +7,7 @@ genai.configure(api_key="AIzaSyBlJ0FSupoYW8NrsxXsZQyDehDLzbwV-N4")
 
 # Try to load the best available model
 try:
-    model = genai.GenerativeModel("models/gemini-1.5-pro")
+    model = genai.GenerativeModel("models/gemini-2.5 flash")
 except Exception:
     # Fallback if 1.5-pro is not available
     model = genai.GenerativeModel("models/gemini-pro")
