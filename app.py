@@ -3,7 +3,7 @@ import google.generativeai as genai
 import pandas as pd
 
 # Configure Gemini API
-genai.configure(api_key="AIzaSyBlJ0FSupoYW8NrsxXsZQyDehDLzbwV-N4")
+genai.configure(api_key="AIzaSyD4OtdbrAP5zSPmW5XDxsVSciBWVAchAG0")
 
 # Try to load the best available model
 try:
