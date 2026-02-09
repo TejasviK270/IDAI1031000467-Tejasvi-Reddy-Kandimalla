@@ -3,11 +3,11 @@ import google.generativeai as genai
 import pandas as pd
 
 # Configure Gemini API with your key
-genai.configure(api_key="YOUR_REAL_API_KEY")
+genai.configure(api_key="AIzaSyD4OtdbrAP5zSPmW5XDxsVSciBWVAchAG0")
 
 # Try to load the best available model
 try:
-    model = genai.GenerativeModel("models/gemini-1.5-pro")
+    model = genai.GenerativeModel("models/gemini-2.5-flash")
 except Exception:
     # Fallback if 1.5-pro is not available
     model = genai.GenerativeModel("models/gemini-pro")
