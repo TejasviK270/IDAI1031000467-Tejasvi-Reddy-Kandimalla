@@ -48,26 +48,3 @@ if st.button("Generate Plan"):
         st.write(response.text)
     except Exception as e:
         st.error(f"Gemini API error: {e}")
-
-
-
-
-
-prompts = [
-    f"Generate a full-body workout plan for a {position} in {sport}.",
-    f"Create a safe recovery training schedule for an athlete with {injury}.",
-    f"Provide tactical coaching tips to improve performance in {sport}.",
-    f"Suggest a week-long nutrition guide for a 15-year-old athlete following {nutrition}.",
-    f"Generate a personalized warm-up and cooldown routine for a {position} in {sport}.",
-    f"Design a hydration and electrolyte strategy for a young {sport} athlete.",
-    f"Create mental focus routines for a player preparing for a tournament.",
-    f"Provide mobility workouts for post-injury recovery targeting {injury}.",
-    f"Generate positional decision-making drills for a {position} in {sport}.",
-    f"Suggest pre-match visualization techniques to improve confidence and tactical awareness."
-]
-
-for p in prompts:
-    response = model.generate_content([p])
-    print("Prompt:", p)
-    print("Output:", response.text)
-    print("-" * 50)
