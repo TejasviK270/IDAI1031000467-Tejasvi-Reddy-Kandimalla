@@ -24,23 +24,7 @@ training_pref = st.selectbox("Training preference:", ["Low Intensity", "Moderate
 nutrition = st.text_input("Nutrition requirements (e.g., vegetarian, high protein, allergies)")
 goal = st.text_input("Desired goal (e.g., stamina, recovery, tactical improvement)")
 
-if st.button("Generate Plan"):
-    # Build the prompt
-    prompt = f"""
-    You are CoachBot AI, a virtual sports coach.
-    Sport: {sport}
-    Position: {position}
-    Injury history: {injury}
-    Training preference: {training_pref}
-    Nutrition: {nutrition}
-    Goal: {goal}
 
-    Generate a personalized fitness plan including:
-    - Workout routine
-    - Recovery tips
-    - Tactical advice
-    - Nutrition guidance
-    """
 if st.button("Generate Plan"):
     prompts = [
         f"Generate a full-body workout plan for a {position} in {sport}.",
