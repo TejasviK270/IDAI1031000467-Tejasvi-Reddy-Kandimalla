@@ -49,14 +49,15 @@ if st.button("Generate Plan"):
         2. A weekly schedule in Markdown table format with columns:
            Day | Workout | Nutrition Focus | Breakfast | Lunch | Dinner
            Tailor meals to the nutrition preference and sport context.
+           IMPORTANT: Output the table in proper Markdown format with headers and rows.
         """
 
     try:
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=500,
-                temperature=0.8  # higher temperature for variety
+                max_output_tokens=600,
+                temperature=0.8  # variety
             )
         )
 
@@ -64,7 +65,10 @@ if st.button("Generate Plan"):
 
         # Display the fitness plan (everything before the table)
         st.subheader("🏆 Your Personalized Plan")
-        plan_text = text_output.split("| Day")[0]
+        if "| Day" in text_output:
+            plan_text = text_output.split("| Day")[0]
+        else:
+            plan_text = text_output
         formatted_text = "\n\n".join(
             textwrap.fill(p, width=80) for p in plan_text.split("\n") if p.strip()
         )
