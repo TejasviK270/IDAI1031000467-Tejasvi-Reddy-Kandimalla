@@ -1,10 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
-import pandas as pd
+import textwrap
 import requests
+import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
-import textwrap
 
 # Configure Gemini API
 genai.configure(api_key="AIzaSyDB9wFirBoOWOJCjstVxVEXXROgFtyfr-I")
@@ -47,14 +47,13 @@ if st.button("Generate Plan"):
         Generate a concise fitness plan in 4–5 sentences only.
         Keep the style similar to:
         "Start with 15 minutes of dynamic warm-up. Avoid high-impact lunges due to the knee injury. Focus on pool-based cardio, resistance band drills, and hamstring stretches. Add vitamin-rich meals and hydration during peak hours."
-        Also provide a simple weekly training/nutrition schedule in tabular format.
         """
 
     try:
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=200,  # keep output short
+                max_output_tokens=150,  # short response
                 temperature=0.6
             )
         )
@@ -67,7 +66,19 @@ if st.button("Generate Plan"):
         )
         st.write(formatted_text)
 
-        # --- Use pandas: create a simple weekly plan table ---
+        # --- Motivational Quote (requests library) ---
+        try:
+            quote_api = "https://api.quotable.io/random?tags=success|sports|motivational"
+            r = requests.get(quote_api, timeout=5)
+            if r.status_code == 200:
+                quote = r.json().get("content", "")
+                st.success(f"💡 Motivational Quote: {quote}")
+            else:
+                st.warning("Could not fetch motivational quote.")
+        except Exception:
+            st.warning("Could not fetch motivational quote.")
+
+        # --- Example Weekly Plan (pandas + charts) ---
         weekly_plan = {
             "Day": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
             "Workout": ["Cardio", "Strength", "Rest", "Agility", "Strength", "Cardio", "Rest"],
@@ -77,7 +88,7 @@ if st.button("Generate Plan"):
         st.write("📅 Example Weekly Plan:")
         st.dataframe(df)
 
-        # --- Use matplotlib: bar chart of workout frequency ---
+        # Matplotlib bar chart
         workout_counts = df["Workout"].value_counts()
         fig, ax = plt.subplots()
         ax.bar(workout_counts.index, workout_counts.values, color="skyblue")
@@ -85,19 +96,9 @@ if st.button("Generate Plan"):
         ax.set_title("Workout Distribution")
         st.pyplot(fig)
 
-        # --- Use plotly: pie chart of nutrition focus ---
+        # Plotly pie chart
         fig2 = px.pie(df, names="Nutrition Focus", title="Nutrition Focus Distribution")
         st.plotly_chart(fig2)
-
-        # --- Use requests: motivational quote ---
-        try:
-            quote_api = "https://api.quotable.io/random?tags=motivational"
-            r = requests.get(quote_api, timeout=5)
-            if r.status_code == 200:
-                quote = r.json().get("content", "")
-                st.success(f"💡 Motivational Quote: {quote}")
-        except Exception:
-            st.warning("Could not fetch motivational quote.")
 
         # --- Evaluation & Analysis Section ---
         st.subheader("📊 Evaluation & Analysis")
