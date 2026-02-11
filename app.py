@@ -11,7 +11,7 @@ genai.configure(api_key="AIzaSyDB9wFirBoOWOJCjstVxVEXXROgFtyfr-I")
 
 # Load model with fallback
 try:
-    model = genai.GenerativeModel("models/gemini-1.5-pro")
+    model = genai.GenerativeModel("models/gemini-2.5-flash")
 except Exception:
     model = genai.GenerativeModel("models/gemini-pro")
 
