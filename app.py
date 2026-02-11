@@ -11,7 +11,7 @@ genai.configure(api_key="AIzaSyDB9wFirBoOWOJCjstVxVEXXROgFtyfr-I")
 
 # Load model with fallback
 try:
-    model = genai.GenerativeModel("models/gemini-2.5-flash")
+    model = genai.GenerativeModel("models/gemini-1.5-pro")
 except Exception:
     model = genai.GenerativeModel("models/gemini-pro")
 
@@ -47,14 +47,15 @@ if st.button("Generate Plan"):
         Generate a concise fitness plan in 4–5 sentences only.
         Keep the style similar to:
         "Start with 15 minutes of dynamic warm-up. Avoid high-impact lunges due to the knee injury. Focus on pool-based cardio, resistance band drills, and hamstring stretches. Add vitamin-rich meals and hydration during peak hours."
+        Also provide a simple weekly training/nutrition schedule in tabular format.
         """
 
     try:
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=150,  # keep output short
-                temperature=0.6         # balance creativity and focus
+                max_output_tokens=200,  # keep output short
+                temperature=0.6
             )
         )
 
@@ -66,22 +67,26 @@ if st.button("Generate Plan"):
         )
         st.write(formatted_text)
 
-        # --- Use pandas: store prompt/response ---
-        df = pd.DataFrame({"Prompt": [prompt], "Response": [response.text]})
-        st.write("📊 Response stored in DataFrame:")
+        # --- Use pandas: create a simple weekly plan table ---
+        weekly_plan = {
+            "Day": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            "Workout": ["Cardio", "Strength", "Rest", "Agility", "Strength", "Cardio", "Rest"],
+            "Nutrition Focus": ["High protein", "Balanced", "Hydration", "Carbs", "Protein", "Vitamins", "Hydration"]
+        }
+        df = pd.DataFrame(weekly_plan)
+        st.write("📅 Example Weekly Plan:")
         st.dataframe(df)
 
-        # --- Use matplotlib: bar chart of word count ---
-        word_count = len(response.text.split())
+        # --- Use matplotlib: bar chart of workout frequency ---
+        workout_counts = df["Workout"].value_counts()
         fig, ax = plt.subplots()
-        ax.bar(["Response Length"], [word_count], color="skyblue")
-        ax.set_ylabel("Word Count")
+        ax.bar(workout_counts.index, workout_counts.values, color="skyblue")
+        ax.set_ylabel("Frequency")
+        ax.set_title("Workout Distribution")
         st.pyplot(fig)
 
-        # --- Use plotly: pie chart of section emphasis ---
-        sections = ["Workout", "Recovery", "Tactical", "Nutrition"]
-        values = [response.text.lower().count(s.lower()) for s in sections]
-        fig2 = px.pie(names=sections, values=values, title="Response Section Emphasis")
+        # --- Use plotly: pie chart of nutrition focus ---
+        fig2 = px.pie(df, names="Nutrition Focus", title="Nutrition Focus Distribution")
         st.plotly_chart(fig2)
 
         # --- Use requests: motivational quote ---
@@ -97,9 +102,16 @@ if st.button("Generate Plan"):
         # --- Evaluation & Analysis Section ---
         st.subheader("📊 Evaluation & Analysis")
         st.write("""
-        - Cross-check recommendations with online sport science resources.
-        - Share outputs with athletes, PE teachers, or coaches for validation.
-        - Refine prompts for better accuracy or clarity.
+        **Cross-check with sport science:**  
+        Compare warm-up and recovery suggestions with trusted sources like ACSM or ExRx.net.  
+        Dynamic warm-ups and resistance bands are widely recommended for youth athletes.
+
+        **Share with coaches/teachers:**  
+        Present this plan to a PE teacher or coach. They can confirm whether the drills match the athlete’s age and position demands.
+
+        **Refine prompts:**  
+        If the output is too generic, add more detail (e.g., "female midfielder, age 14, preparing for a school tournament, with mild knee strain").  
+        This helps Gemini tailor the advice more accurately.
         """)
 
     except Exception as e:
