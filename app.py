@@ -100,20 +100,61 @@ if st.button("Generate Plan"):
         fig2 = px.pie(df, names="Nutrition Focus", title="Nutrition Focus Distribution")
         st.plotly_chart(fig2)
 
-        # --- Evaluation & Analysis Section ---
+        # --- Dynamic Evaluation & Analysis Section ---
         st.subheader("📊 Evaluation & Analysis")
-        st.write("""
-        **Cross-check with sport science:**  
-        Compare warm-up and recovery suggestions with trusted sources like ACSM or ExRx.net.  
-        Dynamic warm-ups and resistance bands are widely recommended for youth athletes.
 
-        **Share with coaches/teachers:**  
-        Present this plan to a PE teacher or coach. They can confirm whether the drills match the athlete’s age and position demands.
+        if "hydration" in prompt.lower():
+            st.write("""
+            **Cross-check with sport science:**  
+            Compare hydration scheduling with guidelines from the National Athletic Trainers’ Association.  
+            Ensure fluid intake matches age and activity level.
 
-        **Refine prompts:**  
-        If the output is too generic, add more detail (e.g., "female midfielder, age 14, preparing for a school tournament, with mild knee strain").  
-        This helps Gemini tailor the advice more accurately.
-        """)
+            **Share with coaches/teachers:**  
+            Confirm hydration breaks align with school tournament rules.
+
+            **Refine prompts:**  
+            If the output is too generic, add more detail (e.g., "female midfielder, age 14, playing in hot weather conditions").
+            """)
+
+        elif "stamina" in prompt.lower() or "endurance" in prompt.lower():
+            st.write("""
+            **Cross-check with sport science:**  
+            Review stamina-building routines against ACSM endurance training recommendations.  
+            Interval running and progressive overload are widely validated.
+
+            **Share with coaches/teachers:**  
+            Coaches can adjust intensity to match age and fitness level.
+
+            **Refine prompts:**  
+            Add specifics like "two-week stamina plan for a 14-year-old midfielder" to get more tailored advice.
+            """)
+
+        elif "injury" in prompt.lower() or "recovery" in prompt.lower():
+            st.write("""
+            **Cross-check with sport science:**  
+            Validate recovery drills with physiotherapy guidelines.  
+            Resistance bands and pool-based cardio are often recommended for safe rehab.
+
+            **Share with coaches/teachers:**  
+            Ensure exercises are cleared by a physiotherapist or PE teacher.
+
+            **Refine prompts:**  
+            Specify injury type (e.g., "mild knee strain") for more accurate recovery suggestions.
+            """)
+
+        else:
+            st.write("""
+            **Cross-check with sport science:**  
+            Compare recommendations with ACSM or ExRx.net resources.  
+            Adjust based on age, sport, and training preference.
+
+            **Share with coaches/teachers:**  
+            Validate drills and nutrition with a PE teacher or coach.
+
+            **Refine prompts:**  
+            If the output is too generic, add more detail (e.g., "female midfielder, age 14, preparing for a school tournament, with mild knee strain").  
+            This helps Gemini tailor the advice more accurately.
+            """)
 
     except Exception as e:
         st.error(f"Gemini API error: {e}")
