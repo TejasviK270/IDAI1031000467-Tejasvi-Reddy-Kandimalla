@@ -10,7 +10,7 @@ genai.configure(api_key="AIzaSyBiOVXFpB77Q294p4_tvpbfHTZt2_lRqQg")
 
 # Load model with fallback
 try:
-    model = genai.GenerativeModel("models/gemini-1.5-pro")
+    model = genai.GenerativeModel("models/gemini-2.5-flash")
 except Exception:
     model = genai.GenerativeModel("models/gemini-pro")
 
@@ -23,7 +23,7 @@ sport = st.selectbox("Select your sport:", ["Football", "Cricket", "Basketball",
 position = st.text_input("Enter your position (e.g., Striker, Bowler, Goalkeeper)")
 injury = st.text_input("Injury history or risk zones (optional)")
 training_pref = st.selectbox("Training preference:", ["Low Intensity", "Moderate", "High Intensity"])
-nutrition = st.text_input("Nutrition requirements (e.g., vegetarian, high protein, allergies)")
+nutrition = st.text_input("Nutrition requirements (e.g., vegetarian, high protein)")
 allergies = st.text_input("List any allergies (e.g., nuts, dairy, gluten)")
 goal = st.text_input("Desired goal (e.g., stamina, recovery, tactical improvement)")
 
