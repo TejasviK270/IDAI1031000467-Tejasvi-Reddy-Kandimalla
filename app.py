@@ -44,18 +44,20 @@ if st.button("Generate Plan"):
         Nutrition: {nutrition}
         Goal: {goal}
 
-        Generate a concise, structured fitness plan including:
-        - Workout routine
-        - Recovery tips
-        - Tactical advice
-        - Nutrition guidance
-
-        Keep each section short (2–3 sentences), similar to:
+        Generate a concise fitness plan in 4–5 sentences only.
+        Keep the style similar to:
         "Start with 15 minutes of dynamic warm-up. Avoid high-impact lunges due to the knee injury. Focus on pool-based cardio, resistance band drills, and hamstring stretches. Add vitamin-rich meals and hydration during peak hours."
         """
 
     try:
-        response = model.generate_content([prompt])
+        response = model.generate_content(
+            [prompt],
+            generation_config=genai.GenerationConfig(
+                max_output_tokens=150,  # keep output short
+                temperature=0.6         # balance creativity and focus
+            )
+        )
+
         st.subheader("🏆 Your Personalized Plan")
 
         # Format into shorter paragraphs
