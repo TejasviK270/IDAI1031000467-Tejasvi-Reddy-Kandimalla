@@ -53,7 +53,7 @@ if st.button("Generate Plan"):
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=150,  # short response
+                max_output_tokens=150,
                 temperature=0.6
             )
         )
@@ -68,15 +68,15 @@ if st.button("Generate Plan"):
 
         # --- Motivational Quote (requests library) ---
         try:
-            quote_api = "https://api.quotable.io/random?tags=success|sports|motivational"
+            quote_api = "https://api.quotable.io/random?tags=inspirational|sports|success"
             r = requests.get(quote_api, timeout=5)
-            if r.status_code == 200:
+            if r.status_code == 200 and "content" in r.json():
                 quote = r.json().get("content", "")
                 st.success(f"💡 Motivational Quote: {quote}")
             else:
-                st.warning("Could not fetch motivational quote.")
+                st.info("💡 Stay motivated: Believe in your training and trust the process!")
         except Exception:
-            st.warning("Could not fetch motivational quote.")
+            st.info("💡 Stay motivated: Believe in your training and trust the process!")
 
         # --- Example Weekly Plan (pandas + charts) ---
         weekly_plan = {
