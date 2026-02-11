@@ -1,8 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
-import textwrap
-import requests
 import pandas as pd
+import requests
 import matplotlib.pyplot as plt
 import plotly.express as px
 
@@ -11,7 +10,7 @@ genai.configure(api_key="AIzaSyBiOVXFpB77Q294p4_tvpbfHTZt2_lRqQg")
 
 # Load model with fallback
 try:
-    model = genai.GenerativeModel("models/gemini-2.5-flash")
+    model = genai.GenerativeModel("models/gemini-1.5-pro")
 except Exception:
     model = genai.GenerativeModel("models/gemini-pro")
 
@@ -25,13 +24,13 @@ position = st.text_input("Enter your position (e.g., Striker, Bowler, Goalkeeper
 injury = st.text_input("Injury history or risk zones (optional)")
 training_pref = st.selectbox("Training preference:", ["Low Intensity", "Moderate", "High Intensity"])
 nutrition = st.text_input("Nutrition requirements (e.g., vegetarian, high protein, allergies)")
+allergies = st.text_input("List any allergies (e.g., nuts, dairy, gluten)")
 goal = st.text_input("Desired goal (e.g., stamina, recovery, tactical improvement)")
 
 # Free-form custom prompt
 custom_prompt = st.text_area("Or enter your own custom coaching request:")
 
 if st.button("Generate Plan"):
-    # Build structured prompt if no custom prompt is given
     if custom_prompt.strip():
         prompt = custom_prompt
     else:
@@ -42,13 +41,14 @@ if st.button("Generate Plan"):
         Injury history: {injury}
         Training preference: {training_pref}
         Nutrition: {nutrition}
+        Allergies: {allergies}
         Goal: {goal}
 
         Generate two outputs:
         1. A concise fitness plan in 4–5 sentences only.
         2. A weekly schedule in Markdown table format with columns:
            Day | Workout | Nutrition Focus | Breakfast | Lunch | Dinner
-           Tailor meals to the nutrition preference and sport context.
+           Tailor meals to the nutrition preference, allergies, and sport context.
            IMPORTANT: Output the table in proper Markdown format with headers and rows.
         """
 
@@ -56,8 +56,8 @@ if st.button("Generate Plan"):
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=600,
-                temperature=0.8  # variety
+                max_output_tokens=700,
+                temperature=0.8
             )
         )
 
@@ -69,10 +69,7 @@ if st.button("Generate Plan"):
             plan_text = text_output.split("| Day")[0]
         else:
             plan_text = text_output
-        formatted_text = "\n\n".join(
-            textwrap.fill(p, width=80) for p in plan_text.split("\n") if p.strip()
-        )
-        st.write(formatted_text)
+        st.write(plan_text.strip())
 
         # Parse the Markdown table into pandas
         st.write("### 📅 Weekly Plan with Meals")
@@ -115,6 +112,13 @@ if st.button("Generate Plan"):
                 st.info("💡 Stay motivated: Believe in your training and trust the process!")
         except Exception:
             st.info("💡 Stay motivated: Believe in your training and trust the process!")
+
+        # Allergies Section
+        st.subheader("🚫 Allergy Considerations")
+        if allergies.strip():
+            st.write(f"Meals have been tailored to avoid: **{allergies}**")
+        else:
+            st.write("No allergies specified. Meals include general recommendations.")
 
         # Dynamic Evaluation & Analysis
         st.subheader("📊 Evaluation & Analysis")
