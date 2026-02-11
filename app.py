@@ -46,7 +46,8 @@ if st.button("Generate Plan"):
 
         Generate two outputs:
         1. A concise fitness plan in 4–5 sentences only.
-        2. A weekly schedule in tabular format with columns: Day, Workout, Nutrition Focus, Breakfast, Lunch, Dinner.
+        2. A weekly schedule in Markdown table format with columns:
+           Day | Workout | Nutrition Focus | Breakfast | Lunch | Dinner
            Tailor meals to the nutrition preference and sport context.
         """
 
@@ -54,28 +55,24 @@ if st.button("Generate Plan"):
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=400,
+                max_output_tokens=500,
                 temperature=0.8  # higher temperature for variety
             )
         )
 
-        st.subheader("🏆 Your Personalized Plan")
-
-        # Split response into plan + table
         text_output = response.text
 
-        # Display the text plan
-        st.write("### Fitness Plan")
-        plan_text = text_output.split("Day")[0]  # crude split before table starts
+        # Display the fitness plan (everything before the table)
+        st.subheader("🏆 Your Personalized Plan")
+        plan_text = text_output.split("| Day")[0]
         formatted_text = "\n\n".join(
             textwrap.fill(p, width=80) for p in plan_text.split("\n") if p.strip()
         )
         st.write(formatted_text)
 
-        # Try to parse table-like output into pandas DataFrame
+        # Parse the Markdown table into pandas
         st.write("### 📅 Weekly Plan with Meals")
         try:
-            # Gemini often outputs markdown tables, so we can parse them
             lines = [line for line in text_output.split("\n") if "|" in line]
             if lines:
                 headers = [h.strip() for h in lines[0].split("|")[1:-1]]
