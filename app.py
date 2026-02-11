@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 # Configure Gemini API
-genai.configure(api_key="AIzaSyDB9wFirBoOWOJCjstVxVEXXROgFtyfr-I")
+genai.configure(api_key="AIzaSyBiOVXFpB77Q294p4_tvpbfHTZt2_lRqQg")
 
 # Load model with fallback
 try:
