@@ -44,29 +44,66 @@ if st.button("Generate Plan"):
         Nutrition: {nutrition}
         Goal: {goal}
 
-        Generate a concise fitness plan in 4–5 sentences only.
-        Keep the style similar to:
-        "Start with 15 minutes of dynamic warm-up. Avoid high-impact lunges due to the knee injury. Focus on pool-based cardio, resistance band drills, and hamstring stretches. Add vitamin-rich meals and hydration during peak hours."
+        Generate two outputs:
+        1. A concise fitness plan in 4–5 sentences only.
+        2. A weekly schedule in tabular format with columns: Day, Workout, Nutrition Focus, Breakfast, Lunch, Dinner.
+           Tailor meals to the nutrition preference and sport context.
         """
 
     try:
         response = model.generate_content(
             [prompt],
             generation_config=genai.GenerationConfig(
-                max_output_tokens=150,
-                temperature=0.6
+                max_output_tokens=400,
+                temperature=0.8  # higher temperature for variety
             )
         )
 
         st.subheader("🏆 Your Personalized Plan")
 
-        # Format into shorter paragraphs
+        # Split response into plan + table
+        text_output = response.text
+
+        # Display the text plan
+        st.write("### Fitness Plan")
+        plan_text = text_output.split("Day")[0]  # crude split before table starts
         formatted_text = "\n\n".join(
-            textwrap.fill(p, width=80) for p in response.text.split("\n") if p.strip()
+            textwrap.fill(p, width=80) for p in plan_text.split("\n") if p.strip()
         )
         st.write(formatted_text)
 
-        # --- Motivational Quote (requests library) ---
+        # Try to parse table-like output into pandas DataFrame
+        st.write("### 📅 Weekly Plan with Meals")
+        try:
+            # Gemini often outputs markdown tables, so we can parse them
+            lines = [line for line in text_output.split("\n") if "|" in line]
+            if lines:
+                headers = [h.strip() for h in lines[0].split("|")[1:-1]]
+                data = []
+                for row in lines[2:]:
+                    cells = [c.strip() for c in row.split("|")[1:-1]]
+                    if len(cells) == len(headers):
+                        data.append(cells)
+                df = pd.DataFrame(data, columns=headers)
+                st.dataframe(df)
+
+                # Matplotlib bar chart of workouts
+                workout_counts = df["Workout"].value_counts()
+                fig, ax = plt.subplots()
+                ax.bar(workout_counts.index, workout_counts.values, color="skyblue")
+                ax.set_ylabel("Frequency")
+                ax.set_title("Workout Distribution")
+                st.pyplot(fig)
+
+                # Plotly pie chart of nutrition focus
+                fig2 = px.pie(df, names="Nutrition Focus", title="Nutrition Focus Distribution")
+                st.plotly_chart(fig2)
+            else:
+                st.info("Could not parse table from AI output. Try refining your prompt.")
+        except Exception:
+            st.info("Could not parse table from AI output. Try refining your prompt.")
+
+        # Motivational Quote
         try:
             quote_api = "https://api.quotable.io/random?tags=inspirational|sports|success"
             r = requests.get(quote_api, timeout=5)
@@ -78,83 +115,19 @@ if st.button("Generate Plan"):
         except Exception:
             st.info("💡 Stay motivated: Believe in your training and trust the process!")
 
-        # --- Example Weekly Plan (pandas + charts) ---
-        weekly_plan = {
-            "Day": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-            "Workout": ["Cardio", "Strength", "Rest", "Agility", "Strength", "Cardio", "Rest"],
-            "Nutrition Focus": ["High protein", "Balanced", "Hydration", "Carbs", "Protein", "Vitamins", "Hydration"]
-        }
-        df = pd.DataFrame(weekly_plan)
-        st.write("📅 Example Weekly Plan:")
-        st.dataframe(df)
-
-        # Matplotlib bar chart
-        workout_counts = df["Workout"].value_counts()
-        fig, ax = plt.subplots()
-        ax.bar(workout_counts.index, workout_counts.values, color="skyblue")
-        ax.set_ylabel("Frequency")
-        ax.set_title("Workout Distribution")
-        st.pyplot(fig)
-
-        # Plotly pie chart
-        fig2 = px.pie(df, names="Nutrition Focus", title="Nutrition Focus Distribution")
-        st.plotly_chart(fig2)
-
-        # --- Dynamic Evaluation & Analysis Section ---
+        # Dynamic Evaluation & Analysis
         st.subheader("📊 Evaluation & Analysis")
-
         if "hydration" in prompt.lower():
-            st.write("""
-            **Cross-check with sport science:**  
-            Compare hydration scheduling with guidelines from the National Athletic Trainers’ Association.  
-            Ensure fluid intake matches age and activity level.
-
-            **Share with coaches/teachers:**  
-            Confirm hydration breaks align with school tournament rules.
-
-            **Refine prompts:**  
-            If the output is too generic, add more detail (e.g., "female midfielder, age 14, playing in hot weather conditions").
-            """)
-
+            st.write("Cross-check hydration scheduling with NATA guidelines. Ensure fluid intake matches age and activity level.")
         elif "stamina" in prompt.lower() or "endurance" in prompt.lower():
-            st.write("""
-            **Cross-check with sport science:**  
-            Review stamina-building routines against ACSM endurance training recommendations.  
-            Interval running and progressive overload are widely validated.
-
-            **Share with coaches/teachers:**  
-            Coaches can adjust intensity to match age and fitness level.
-
-            **Refine prompts:**  
-            Add specifics like "two-week stamina plan for a 14-year-old midfielder" to get more tailored advice.
-            """)
-
+            st.write("Cross-check stamina routines with ACSM endurance training standards. Interval running and progressive overload are validated approaches.")
         elif "injury" in prompt.lower() or "recovery" in prompt.lower():
-            st.write("""
-            **Cross-check with sport science:**  
-            Validate recovery drills with physiotherapy guidelines.  
-            Resistance bands and pool-based cardio are often recommended for safe rehab.
-
-            **Share with coaches/teachers:**  
-            Ensure exercises are cleared by a physiotherapist or PE teacher.
-
-            **Refine prompts:**  
-            Specify injury type (e.g., "mild knee strain") for more accurate recovery suggestions.
-            """)
-
+            st.write("Cross-check recovery drills with physiotherapy guidelines. Resistance bands and pool-based cardio are safe rehab methods.")
         else:
-            st.write("""
-            **Cross-check with sport science:**  
-            Compare recommendations with ACSM or ExRx.net resources.  
-            Adjust based on age, sport, and training preference.
+            st.write("Cross-check recommendations with ACSM or ExRx.net resources. Adjust based on age, sport, and training preference.")
 
-            **Share with coaches/teachers:**  
-            Validate drills and nutrition with a PE teacher or coach.
-
-            **Refine prompts:**  
-            If the output is too generic, add more detail (e.g., "female midfielder, age 14, preparing for a school tournament, with mild knee strain").  
-            This helps Gemini tailor the advice more accurately.
-            """)
+        st.write("**Share with coaches/teachers:** Validate drills and nutrition with a PE teacher or coach.")
+        st.write("**Refine prompts:** If the output is too generic, add more detail (e.g., 'female midfielder, age 14, preparing for a school tournament, with mild knee strain'). This helps Gemini tailor the advice more accurately.")
 
     except Exception as e:
         st.error(f"Gemini API error: {e}")
