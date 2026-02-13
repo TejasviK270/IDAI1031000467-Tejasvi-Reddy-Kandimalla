@@ -56,3 +56,4 @@ prompt_templates = {
     "Positional Tactical Tips": f"Provide tactical coaching tips to improve skill and positioning for a {position} in {sport}.",
     "Weekly Nutrition Guide": f"Suggest a week-long nutrition guide for a {age}-year-old athlete following a {nutrition_pref} diet. Include a table of daily macros.",
     "Match-Day Mindset & Visualization": f
+}
