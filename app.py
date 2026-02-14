@@ -4,79 +4,75 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1. Configuration & API Setup
-# Replace with your actual Gemini 1.5 API Key from Google AI Studio
+# SECURITY NOTE: Never hardcode API keys in production!
 API_KEY = "AIzaSyBiOVXFpB77Q294p4_tvpbfHTZt2_lRqQg" 
 
 genai.configure(api_key=API_KEY)
-# Using Gemini 1.5 Pro as per assignment requirements 
+# Updated to a valid model name
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 st.set_page_config(page_title="CoachBot AI: Youth Sports Excellence", layout="wide")
 
-# 2. UI Header & Branding (Task 2, Step 1)
+# 2. UI Header
 st.title("👟 CoachBot AI")
-st.subheader("Empowering the Next Generation of Athletes")
-st.markdown("Developed for **NextGen Sports Lab** to bridge the coaching gap.")
+st.subheader("Concise, Table-Based Athlete Support")
 st.divider()
 
-# 3. User Input Section (Task 2, Step 2)
+# 3. User Input Section
 with st.sidebar:
     st.header("Athlete Profile")
     sport = st.selectbox("Sport:", ["Football", "Cricket", "Basketball", "Athletics", "Rugby", "Tennis"])
-    position = st.text_input("Position (e.g., Striker, Bowler):", "General")
+    position = st.text_input("Position:", "General")
     age = st.number_input("Age:", min_value=8, max_value=25, value=15)
     
     st.header("Physical Condition")
-    injury_history = st.text_area("Injury History/Risk Zones:", "None")
+    injury_history = st.text_area("Injury History:", "None")
     goal = st.selectbox("Primary Goal:", ["Build Stamina", "Post-Injury Recovery", "Tactical Improvement", "Strength Training"])
     
     st.header("Preferences")
     nutrition_pref = st.radio("Dietary Type:", ["Veg", "Non-Veg", "Vegan"])
     
-    # Hyperparameter Tuning (Task 2, Step 2)
-    # Lower temperature (~0.3) for conservative/safe training plans 
-    temp = st.slider("Coaching Style (Temperature):", 0.0, 1.0, 0.3) 
+    temp = st.slider("Coaching Style (Strict -> Creative):", 0.0, 1.0, 0.2) 
 
-# 4. Compulsory Feature Design: 10 Prompts (Task 2, Step 3)
+# 4. Refined Prompt Engineering (Enforcing Tables & Brevity)
 st.markdown("### Choose a Coaching Service")
 feature_choice = st.selectbox("What do you need help with today?", [
     "Full-Body Workout Plan", 
+    "Weekly Nutrition Guide",
     "Injury-Safe Recovery Routine", 
     "Positional Tactical Tips",
-    "Weekly Nutrition Guide",
-    "Match-Day Mindset & Visualization",
     "Warm-up & Cooldown Protocol",
     "Decision-Making Drills",
     "Stamina & Conditioning",
-    "Hydration & Electrolyte Strategy",
-    "Post-Match Recovery & Sleep"
+    "Hydration & Electrolyte Strategy"
 ])
 
-# 5. Corrected Prompt Engineering Logic (Task 2, Step 3)
-# All f-strings and brackets are now properly closed to avoid SyntaxErrors
+# Updated templates to specifically ask for Markdown Tables
 prompt_templates = {
-    "Full-Body Workout Plan": f"Generate a full-body workout plan for a {age}-year-old {position} in {sport}. Goal: {goal}.",
-    "Injury-Safe Recovery Routine": f"Create a safe recovery training schedule for an athlete with {injury_history} playing {sport}. Focus on low-impact adaptations.",
-    "Positional Tactical Tips": f"Provide tactical coaching tips to improve skill and positioning for a {position} in {sport}.",
-    "Weekly Nutrition Guide": f"Suggest a week-long nutrition guide for a {age}-year-old athlete following a {nutrition_pref} diet. Include a table of daily macros.",
-    "Match-Day Mindset & Visualization": f"Provide pre-match visualization techniques and mental focus routines for a {age}-year-old {sport} player.",
-    "Warm-up & Cooldown Protocol": f"Generate a personalized warm-up and cooldown routine for a {sport} {position}.",
-    "Decision-Making Drills": f"Design positional decision-making drills for a {position} in {sport} to improve game IQ.",
-    "Stamina & Conditioning": f"Create a high-intensity interval training (HIIT) plan specifically to build stamina for {sport}.",
-    "Hydration & Electrolyte Strategy": f"Generate a hydration and electrolyte scheduling guide for intense {sport} training sessions.",
-    "Post-Match Recovery & Sleep": f"Suggest mobility workouts and sleep hygiene tips for optimal recovery after a {sport} tournament."
+    "Full-Body Workout Plan": "Create a 4-day workout split in a Markdown Table. Columns: Day, Exercise, Sets/Reps, Focus.",
+    "Weekly Nutrition Guide": f"Create a 7-day {nutrition_pref} meal plan in a Markdown Table. Columns: Day, Breakfast, Lunch, Dinner, Snack.",
+    "Injury-Safe Recovery Routine": f"Provide a low-impact recovery schedule in a Markdown Table considering {injury_history}. Columns: Phase, Exercise, Duration, Safety Note.",
+    "Positional Tactical Tips": "Provide 5 bullet-pointed tactical tips for this position. Be extremely brief.",
+    "Warm-up & Cooldown Protocol": "Create a pre/post session routine in a Markdown Table. Columns: Phase, Exercise, Time, Purpose.",
+    "Decision-Making Drills": "List 3 drills in a Markdown Table. Columns: Drill Name, Setup, Objective.",
+    "Stamina & Conditioning": "Create a weekly HIIT schedule in a Markdown Table. Columns: Day, Activity, Intensity, Rest.",
+    "Hydration & Electrolyte Strategy": "Create a hydration timeline in a Markdown Table. Columns: Timing (Pre/During/Post), Fluid Amount, Electrolyte Need."
 }
 
-# 6. Execution & Output (Task 2, Step 4 & 6)
+# 5. Execution & Output
 if st.button("Get CoachBot Advice"):
-    with st.spinner("CoachBot is analyzing your profile..."):
-        # Persona-style instruction to ensure high-quality output 
+    with st.spinner("Generating your concise plan..."):
+        # The System Instruction now strictly enforces the "Concise" and "Table" rules
+        system_instruction = (
+            "You are a professional youth sports coach. Your responses MUST be concise. "
+            "If a table is requested, use Markdown Table format. Use bullet points for lists. "
+            "Avoid long introductions or conclusions. Get straight to the data."
+        )
+        
         full_prompt = f"""
-        System: Act as a professional youth sports coach. 
-        Athlete: {age} years old, Sport: {sport}, Position: {position}.
-        Medical Note: {injury_history}.
+        {system_instruction}
+        Athlete: {age}yo {sport} player ({position}). Goal: {goal}. 
         Request: {prompt_templates[feature_choice]}
-        Output: Provide structured, safe, and motivating advice.
         """
         
         try:
@@ -87,20 +83,21 @@ if st.button("Get CoachBot Advice"):
             
             st.markdown("---")
             st.markdown(f"## 📋 {feature_choice}")
+            
+            # Display the AI response (Gemini's Markdown tables render perfectly in st.write)
             st.write(response.text)
 
-            # Optional Visualization (Task 2, Step 6)
-            if "Nutrition" in feature_choice or "Hydration" in feature_choice:
-                st.subheader("Recommended Macro/Hydration Distribution")
-                labels = ['Protein/Water', 'Carbs/Electrolytes', 'Fats/Vitamins']
-                values = [25, 55, 20]
-                fig, ax = plt.subplots(figsize=(6, 4))
-                ax.bar(labels, values, color=['#FF4B4B', '#1C83E1', '#00C0F2'])
-                ax.set_ylabel('Percentage (%)')
+            # 6. Visualization
+            if any(x in feature_choice for x in ["Nutrition", "Hydration", "Workout"]):
+                st.subheader("Target Distribution")
+                labels = ['Intensity/Protein', 'Recovery/Carbs', 'Mobility/Fats']
+                values = [35, 45, 20]
+                fig, ax = plt.subplots(figsize=(6, 3))
+                ax.barh(labels, values, color=['#FF4B4B', '#1C83E1', '#00C0F2'])
                 st.pyplot(fig)
                 
         except Exception as e:
-            st.error(f"An error occurred: {e}")
+            st.error(f"Error: {e}")
 
 st.divider()
-st.caption("Disclaimer: CoachBot AI provides general suggestions. Always consult a professional coach or doctor for serious injuries.")
+st.caption("Disclaimer: CoachBot AI provides general suggestions. Consult a pro for medical advice.")
