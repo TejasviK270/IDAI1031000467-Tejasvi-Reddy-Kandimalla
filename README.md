@@ -11,8 +11,7 @@ School Name: Birla Open Minds International School
 
 
 
-Gemini API Key Generation
-
+**Gemini API Key Generation**
 
 <img width="1464" height="234" alt="image" src="https://github.com/user-attachments/assets/8796d317-3c37-4519-aa12-ab1c95505278" />
 
