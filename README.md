@@ -24,6 +24,5 @@ Click Create key
 <img width="606" height="492" alt="image" src="https://github.com/user-attachments/assets/8e75ba7e-9156-4732-940f-8115affe5c23" />
 
 
-Prompts
+**Prompts**
 
-<img width="880" height="622" alt="image" src="https://github.com/user-attachments/assets/84249682-96b5-4786-9bec-262bee3ff4f0" />
