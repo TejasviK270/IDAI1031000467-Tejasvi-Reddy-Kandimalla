@@ -10,6 +10,7 @@ School Name: Birla Open Minds International School
 
 
 **Project Overview**
+
 CoachBot AI is a generative AI-powered web assistant developed for NextGen Sports Lab. It acts as a virtual personal coach to bridge the gap in professional sports training for youth athletes. The application provides personalized fitness plans, injury-safe recovery routines, and tactical advice tailored to an athlete’s specific sport, position, and physical condition.
 
 
@@ -18,6 +19,7 @@ Live App Link: (https://idai1031000467-tejasvi-reddy-kandimalla-myanbbugep7cyrtn
 **Research & Problem Definition**
 
 **Goal**
+
 The primary objective is to provide accessible, high-quality coaching to young athletes, particularly in under-resourced regions
 
 **Key Research Findings**
@@ -31,6 +33,7 @@ Injury Prevention: Youth athletes are prone to specific injuries like growth pla
 AI in Sports: Generative AI can simulate a coach’s knowledge by processing user metadata to generate structured, motivating, and safe outputs.
 
 **Technical Implementation**
+
 Model Configuration
 
 Core Model: Gemini 1.5 Flash.
