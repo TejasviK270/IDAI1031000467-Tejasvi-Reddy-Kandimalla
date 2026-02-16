@@ -4,10 +4,10 @@ import pandas as pd
 import io
 
 # 1. Configuration & API Setup
-API_KEY = "AIzaSyDc4535cOCON8bLN_ysjdqim8tMM4Qh6Q0" # 
+API_KEY = "AIzaSyDqr3PAqULRwWEybI6Bzrdwv7pNpDHKcfQ" # 
 
 genai.configure(api_key=API_KEY)
-# Using gemini-1.5-flash for high-speed, reliable structured output
+# Using gemini-2.5-flash for high-speed, reliable structured output
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 st.set_page_config(page_title="CoachBot AI: Elite Performance", layout="wide")
