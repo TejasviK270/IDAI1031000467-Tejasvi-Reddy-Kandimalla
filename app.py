@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1. Configuration & API Setup
-API_KEY = "AIzaSyBiOVXFpB77Q294p4_tvpbfHTZt2_lRqQg" 
+API_KEY = "AIzaSyCGxBAiSzN7drX1y72lWj7osKhOGPoeEeQ" 
 
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
