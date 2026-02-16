@@ -87,7 +87,7 @@ if generate_standard or generate_custom:
             
             st.markdown("---")
             st.markdown(f"### ⚡ Your Personal {title}")
-            st.markdown(clean_response)
+            st.markdown(response.text)
             
             # Simple visualization logic
             if "Nutrition" in title or "Meal" in response.text:
