@@ -4,7 +4,7 @@ import pandas as pd
 import io
 
 # 1. Configuration & API Setup
-API_KEY = "AIzaSyDyLds-7QbmY2UpyEJBJb5opVGZiJGSP7M" # 
+API_KEY = "AIzaSyAIiDSRPKfCUo_btspzqYS8FrWbNAKOhco" # 
 
 genai.configure(api_key=API_KEY)
 # Using gemini-2.5-flash for high-speed, reliable structured output
